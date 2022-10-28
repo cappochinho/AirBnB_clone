@@ -29,11 +29,30 @@ class HBNBCommand(cmd.Cmd):
             print('Quit command to exit the program')
         elif line[0] == 'EOF':
             print('End-Of-File(Ctrl-D), works like the quit command')
+        elif line[0] == 'create':
+            print('Creates a new instance of the object')
         else:
             print("Documented commands (type help < topic >):\n========================================\nEOF  help  quit")
 
     def emptyline(self):
         pass
+
+    def do_create(self, arg):
+        """Creates a new instance of BaseModel"""
+        from models.base_model import BaseModel
+        if arg != "BaseModel":
+            print("** class doesn't exist **")
+            return
+        elif not arg:
+            print("** class name missing **")
+            return
+        
+        new_instance = BaseModel()
+        new_instance.save()
+        print(new_instance.id)
+        
+
+
 
 
 if __name__ == '__main__':
