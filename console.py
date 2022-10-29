@@ -5,6 +5,8 @@
 
 import cmd
 import sys
+from models import storage
+from models.base_model import BaseModel
 
 
 class HBNBCommand(cmd.Cmd):
@@ -31,15 +33,24 @@ class HBNBCommand(cmd.Cmd):
             print('End-Of-File(Ctrl-D), works like the quit command')
         elif line[0] == 'create':
             print('Creates a new instance of the object')
+        elif line[0] == 'show':
+            print("Prints the string representation of a class instance")
+        elif line[0] == 'destroy':
+            print("Deletes an instance based on the class name and id")
+        elif line[0] == 'update':
+            print("Updates an instance based on the class name and id")
         else:
-            print("Documented commands (type help < topic >):\n========================================\nEOF  help  quit")
+            print(
+                "Documented commands (type help < topic >):\n",
+                "========================================\n",
+                "EOF  help  quit create show destroy update"
+                )
 
     def emptyline(self):
         pass
 
     def do_create(self, arg):
         """Creates a new instance of BaseModel"""
-        from models.base_model import BaseModel
         if arg != "BaseModel":
             print("** class doesn't exist **")
             return
@@ -48,9 +59,59 @@ class HBNBCommand(cmd.Cmd):
             return
         
         new_instance = BaseModel()
-        new_instance.save()
+        storage.save()
         print(new_instance.id)
+        storage.save()
+
+    def do_show(self, *args):
+        """Prints the string representation of a class instance"""
         
+        if not args[0]:
+            print("** class name missing **")
+            return
+        if args[0] != "BaseModel":
+            print("** class doesn't exist **")
+            return
+        if not args[1]:
+            print("** instance id missing **")
+            return
+
+        key = args[0] + '.' + args[1]
+
+        try:
+            print(storage.__objects[key])
+        except KeyError:
+            print("** no instance found **")
+
+        def do_destroy(self, *args):
+            """Deletes an instance based on the class name and id"""
+            if not args[0]:
+                print("** class name missing **")
+            if args[0] != "BaseModel":
+                print("** class doesn't exist **")
+            if not args[1]:
+                print("** instance id missing **")
+
+            key = args[0] + '.' + args[1]
+
+            try:
+                del(storage.__objects[key])
+                storage.save()
+            except KeyError:
+                print("** no instance found **")
+
+    def do_all(self, args):
+        """Prints all string representation of all instances"""
+        if args != "BaseModel":
+            print("** class doesn't exist **")
+            return
+
+        for value in storage.__objects.values():
+           print(value)
+
+    def do_update(self, *args):
+        """Updates an instance based on the class name and id"""
+        pass
 
 
 

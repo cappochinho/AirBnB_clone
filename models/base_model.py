@@ -4,12 +4,13 @@
 
 from datetime import datetime
 import uuid
-from __init__ import storage
+
 
 class BaseModel:
     """BaseModel for all other related classes"""
     def __init__(self, *args, **kwargs):
         """init file"""
+        from models.__init__ import storage
         if kwargs:
             kwargs['created_at'] = datetime.now()
             kwargs['updated_at'] = datetime.now()
@@ -28,6 +29,7 @@ class BaseModel:
 
     def save(self):
         """Updates the time the object is updated"""
+        from models.__init__ import storage
         self.updated_at = datetime.now()
         storage.save()
 
