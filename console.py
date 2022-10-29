@@ -63,8 +63,9 @@ class HBNBCommand(cmd.Cmd):
         print(new_instance.id)
         storage.save()
 
-    def do_show(self, *args):
+    def do_show(self, args):
         """Prints the string representation of a class instance"""
+        args = args.partition(" ")
         
         if not args[0]:
             print("** class name missing **")
@@ -83,19 +84,24 @@ class HBNBCommand(cmd.Cmd):
         except KeyError:
             print("** no instance found **")
 
-        def do_destroy(self, *args):
+        def do_destroy(self, args):
             """Deletes an instance based on the class name and id"""
+            args = args.partition(" ")
+
             if not args[0]:
                 print("** class name missing **")
+                return
             if args[0] != "BaseModel":
                 print("** class doesn't exist **")
+                return
             if not args[1]:
                 print("** instance id missing **")
+                return
 
             key = args[0] + '.' + args[1]
 
             try:
-                del(storage.__objects[key])
+                del(storage.all()[key])
                 storage.save()
             except KeyError:
                 print("** no instance found **")
