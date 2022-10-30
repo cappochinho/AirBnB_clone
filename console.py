@@ -147,53 +147,84 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, args):
         """Updates an instance based on the class name and id"""
-        args = args.split(" ")
+        model_name = model_id = attr_name = attr_val = kwargs = ''
+
+        args = args.partition(" ")
         
         if not args:
             print("** class name missing **")
             return
+        else:
+            model_name = args[0]
 
-        if args[0] != "BaseModel":
+        if model_name not in HBNBCommand.model_list:
             print("** class doesn't exist **")
             return
 
-        if not args[1]:
+        args = args[2].partition(" ")
+        if args[0]:
+            model_id = args[0]
+        else:
             print("** instance id missing **")
             return
 
-        key = args[0] + '.' + args[1]
+        key = model_name + '.' + model_id
 
-        try:
-            if key not in storage.all():
-                print("** no instance found **")
-        except KeyError:
-            pass
+        if key not in storage.all():
+            print("** no instance found **")
 
-        if not args[2]:
-            print("** attribute name missing **")
-            return
+        # determine if kwargs or args
+        if '{' in args[2] and '}' in args[2] and type(eval(args[2])) is dict:
+            kwargs = eval(args[2])
+            args = []
+            for key, value in kwargs.items():
+                args.append(key)
+                args.append(value)
+        else: # isolate args
+            args = args[2]
+            if args and args[0] == '\"':  # check for quoted arg
+                second_quote = args.find('\"', 1)
+                attr_name = args[1: second_quote]
+                args = args[second_quote + 1:]
 
-        try:
-            if args[2] not in storage.all():
-                print("** attribute name missing **")
-                return
-        except AttributeError:
-            pass
+            args = args.partition(' ')
 
-        if not args[3]:
-            print("** value missing **")
-            return
+            # if attr_name argument was not quoted
+            if not attr_name and args[0] != ' ':
+                attr_name = args[0]
+            # check for quoted val arg
+            if args[2] and args[2][0] == '\"':
+                attr_val = args[2][1: args[2].find('\"', 1)]
 
-        if args[3] in ["id", "created_at", "updated_at"]:
-            return
+            # if attr_val was not quoted
+            if not attr_val and args[2]:
+                attr_val = args[2].partition(' ')[0]
 
-        if args[4]:
-            return
+            args = [attr_name, attr_val]
 
+        new_store = storage.all()[key]
+
+        for i, attr_name in enumerate(args):
+                # block only runs on even iterations
+            if (i % 2 == 0):
+                attr_val = args[i + 1]  # following item is value
+                if not attr_name:  # check for attr_name
+                    print("** attribute name missing **")
+                    return
+                if not attr_val:  # check for attr_value
+                    print("** value missing **")
+                    return
+                # type cast as necessary
+                if attr_name in HBNBCommand.types:
+                    attr_val = HBNBCommand.types[attr_name](attr_val)
+
+                # update dictionary with name, value pair
+                new_store.__dict__.update({attr_name: attr_val})
+
+            new_store.__dict__.update({attr_name: attr_val})
+
+        new_store.save()
     
-
-
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
