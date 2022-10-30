@@ -221,7 +221,6 @@ class HBNBCommand(cmd.Cmd):
                 # update dictionary with name, value pair
                 new_store.__dict__.update({attr_name: attr_val})
 
-            new_store.__dict__.update({attr_name: attr_val})
 
         new_store.save()
     
