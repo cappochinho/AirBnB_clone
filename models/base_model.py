@@ -25,7 +25,9 @@ class BaseModel:
 
     def __str__(self):
         """Prints a string representation"""
-        return f"[{__class__.__name__}] ({self.id}) {self.__dict__}"
+        cls = (str(type(self)).split('.')[-1]).split('\'')[0]
+        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+        # return f"[{__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """Updates the time the object is updated"""
@@ -37,7 +39,9 @@ class BaseModel:
         """Returns a dictionary containing all the keys/values"""
         new_dict = {}
         new_dict.update(self.__dict__)
-        class_dict = {'__class__': __class__.__name__}
+        # class_dict = {'__class__': __class__.__name__}
+        class_dict = {'__class__':
+                               (str(type(self)).split('.')[-1]).split('\'')[0]}
         new_dict.update(class_dict)
         new_dict['created_at'] = datetime.now().isoformat()
         new_dict['updated_at'] = datetime.now().isoformat()
