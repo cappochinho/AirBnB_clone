@@ -20,7 +20,7 @@ class HBNBCommand(cmd.Cmd):
        Contains custom quit and EOF implementations
        Also implements 'help' just as other shells
     """
-    prompt: str = "(hbnb)"
+    prompt: str = "(hbnb) "
 
     model_list = {
                   "BaseModel": BaseModel, "User": User, "Amenity": Amenity,
