@@ -12,15 +12,15 @@ class BaseModel:
         """init file"""
         from models.__init__ import storage
         if kwargs:
-            kwargs['created_at'] = datetime.now()
-            kwargs['updated_at'] = datetime.now()
+            kwargs['created_at'] = datetime.now().isoformat()
+            kwargs['updated_at'] = datetime.now().isoformat()
 
             del kwargs['__class__']
             self.__dict__.update(kwargs)
         else:
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.now().isoformat()
-            self.updated_at = datetime.now().isoformat()
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
             storage.new(self)
 
     def __str__(self):

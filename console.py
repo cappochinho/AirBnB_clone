@@ -22,9 +22,16 @@ class HBNBCommand(cmd.Cmd):
     """
     prompt: str = "(hbnb)"
 
-    model_list = {"BaseModel": BaseModel, "User": User, "Amenity": Amenity,
+    model_list = {
+                  "BaseModel": BaseModel, "User": User, "Amenity": Amenity,
                   "City": City, "Place": Place, "Review": Review, "State": State
                   }
+
+    types = {
+        'number_rooms': int, 'number_bathrooms': int,
+        'max_guest': int, 'price_by_night': int,
+        'latitude': float, 'longitude': float
+    }
 
     def do_quit(self, arg):
         """Command to exit the running program"""
@@ -81,7 +88,7 @@ class HBNBCommand(cmd.Cmd):
         new_instance = HBNBCommand.model_list[arg]()
         storage.save()
         print(new_instance.id)
-        # storage.save()
+        storage.save()
 
     def do_show(self, args):
         """Prints the string representation of a class instance"""
