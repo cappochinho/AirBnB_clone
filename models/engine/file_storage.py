@@ -14,7 +14,7 @@ class FileStorage():
 
     def all(self):
         """Returns the dictionary __objects"""
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """Creates a new object in __objects"""
@@ -32,13 +32,14 @@ class FileStorage():
     def reload(self):
         """Deserializes the JSON file to __objects"""
         from models.base_model import BaseModel
+        from models.user import User
+
+        model_list = {"BaseModel": BaseModel, "User": User}
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
-                FileStorage.__objects = json.loads(f.read())
                 temp = json.load(f)
                 for key, val in temp.items():
-                    FileStorage.__objects[key] = BaseModel(**val)
+                    self.all()[key] = model_list[val['__class__']](**val)
         except FileNotFoundError:
             pass
-            
